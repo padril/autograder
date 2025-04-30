@@ -13,12 +13,12 @@ shutil.copy(conv_filename, 'ASSIGNMENT.py')
 import ASSIGNMENT
 import MODEL
 
-for fn_a, fx_a in ASSIGNMENT.__dict__.items():
-    fn_m = 'model_' + fn_a
+for student_func_name, student_func in ASSIGNMENT.__dict__.items():
+    model_func_name = 'model_' + student_func_name
     try: 
-        fx_m = MODEL.__dict__[fn_m]
+        model_func = MODEL.__dict__[model_func_name]
     except: continue
-    a = fx_m(fx_a)
-    print('exercise %s: %s' % (fn_a.upper(), a))
+    a = model_func(student_func)
+    print('exercise %s: %s' % (student_func_name.upper(), a))
 
 os.remove('MODEL.py')
