@@ -5,7 +5,7 @@ For use in automatically grading and providing feedback for problems in Jupyter 
 ## Scoring
 
 To score a student notebook, create a model notebook (see below for format + naming), then use the scoring script:
-```python score_assignment.py [student-notebook.ipynb]```s
+```python score_assignment.py [student-notebook.ipynb]```
 (When calling this script, provide the local path to the student notebook.)
 
 ## Student Notebooks
@@ -34,12 +34,15 @@ Prep functions:
 
 Model functions (one per problem in the student notebook):
 - model functions should have the name of the corresponding student function prefixed with "model_"
-- inside the model function, instantiate the ModelProblem class and run the tests 
-```model = ModelProblem(prep_func, soln_func, stud_func, [extra_sfunc_args], [extra_model_args])
+- inside the model function, instantiate the ModelProblem class and run the tests
+
+```
+model = ModelProblem(prep_func, soln_func, stud_func, [extra_sfunc_args], [extra_model_args])
 return model.run_basic_tests(err_num=True,
                                  hidden=True,
                                  list_len=True,
-                                 list_elems=True)```
+                                 list_elems=True)
+```
 
 - different error messages can be created by setting [one_err_message, multi_err_message, len_err_message, elems_err_message, hidden_len_err_message, hidden_elems_err_message] in run_basic_tests
 - err messages can use f-strings (for custom f strings, change the .format() in the ModelProblem check functions)
