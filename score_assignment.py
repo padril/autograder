@@ -13,12 +13,21 @@ shutil.copy(conv_filename, 'ASSIGNMENT.py')
 import ASSIGNMENT
 import MODEL
 
+total = 0
+correct_num = 0
+
 for student_func_name, student_func in ASSIGNMENT.__dict__.items():
     model_func_name = 'model_' + student_func_name
     try: 
         model_func = MODEL.__dict__[model_func_name]
     except: continue
     a = model_func(student_func)
+    if a == "correct.":
+        correct_num = correct_num + 1
+    total = total + 1
     print('exercise %s: %s' % (student_func_name.upper(), a))
+
+print(f"You got {correct_num} exercise(s) correct out of {total} total exercises. Your score is: {correct_num * 100 / total:.0f}%")
+print(MODEL.threshold(correct_num / total))
 
 os.remove('MODEL.py')
