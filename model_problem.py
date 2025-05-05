@@ -1,3 +1,4 @@
+from itertools import cycle
 
 class ModelProblem:
     def __init__(self, model_func_prep, solution_func, student_func, extra_sfunc_args = [], extra_model_args = []):
@@ -49,7 +50,7 @@ class ModelProblem:
             one_err_message = "incorrect. There was 1 error.\n"
         if multi_err_message is None:
             multi_err_message = "incorrect. There were {err_num} errors.\n"
-        err_num = [x != y for x, y in zip(self.sfunc_vals, self.model_vals)].count(True)
+        err_num = [x != y for x, y in zip(cycle(self.sfunc_vals), self.model_vals)].count(True) + [x != y for x, y in zip(cycle(self.hidden_sfunc_vals), self.hidden_model_vals)].count(True)
         multi_err_message = multi_err_message.format(err_num=err_num)
         if err_num != 0:
             if err_num == 1:
@@ -117,6 +118,7 @@ class ModelProblem:
                     err_messages += value if (value := self.check_list_len(sfunc_elem, model_elem, err_message=hidden_len_err_message)) is not None else ""
                 if list_elems:
                     err_messages += value if (value := self.check_list_elems(sfunc_elem, model_elem, err_message=hidden_elems_err_message)) is not None else ""
+                    break
 
         if not err_messages:
             return "correct."

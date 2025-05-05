@@ -4,11 +4,14 @@ import os
 import subprocess
 
 filename = sys.argv[1]
-subprocess.run(['jupyter','nbconvert','--TagRemovePreprocessor.enabled=True','--TagRemovePreprocessor.remove_cell_tags','remove','--to','python',filename]) 
+subprocess.run(['jupyter','nbconvert','--TagRemovePreprocessor.enabled=True','--TagRemovePreprocessor.remove_cell_tags','remove','--log-level','ERROR','--to','python',filename]) 
 conv_filename = filename[:-6] + '.py'
-modelname = 'model_' + filename[:-6] + '.py'
+modelname = 'model_' + conv_filename
 shutil.copy(modelname, 'MODEL.py')
 shutil.copy(conv_filename, 'ASSIGNMENT.py')
+
+print('_________________________________________________________________________________')
+print('Results:\n')
 
 import ASSIGNMENT
 import MODEL
@@ -25,9 +28,10 @@ for student_func_name, student_func in ASSIGNMENT.__dict__.items():
     if a == "correct.":
         correct_num = correct_num + 1
     total = total + 1
-    print('exercise %s: %s' % (student_func_name.upper(), a))
+    print(f"exercise {student_func_name.upper()}:\n{a}\n")
 
-print(f"You got {correct_num} exercise(s) correct out of {total} total exercises. Your score is: {correct_num * 100 / total:.0f}%")
+print(f"You got {correct_num} exercise(s) correct out of {total} total exercises.")
+print(f"Your score is: {correct_num * 100 / total:.0f}%")
 print(MODEL.threshold(correct_num / total))
 
 os.remove('MODEL.py')
