@@ -2,6 +2,8 @@ import sys
 import shutil
 import os
 import subprocess
+import re
+import contextlib
 
 filename = sys.argv[1]
 subprocess.run(['jupyter','nbconvert','--TagRemovePreprocessor.enabled=True','--TagRemovePreprocessor.remove_cell_tags','remove','--log-level','ERROR','--to','python',filename]) 
@@ -10,10 +12,31 @@ modelname = 'model_' + conv_filename
 shutil.copy(modelname, 'MODEL.py')
 shutil.copy(conv_filename, 'ASSIGNMENT.py')
 
+with open("ASSIGNMENT.py") as file:
+    code_blocks = list(filter(None, re.split(r'#.+\n', file.read())))
+
+clean_blocks = []
+
+for block in code_blocks:
+    try:
+        with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
+            exec(block)
+        clean_blocks.append(block)
+    except (SyntaxError, TypeError, NameError) as e:
+        # print(block.strip())
+        # print(e)
+        # print("________________________________________________")
+        continue
+
+with open("ASSIGNMENT.py", 'w') as file:
+    for block in clean_blocks:
+        file.write(block)
+
 print('_________________________________________________________________________________')
 print('Results:\n')
 
-import ASSIGNMENT
+with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
+    import ASSIGNMENT
 import MODEL
 
 total = 0
@@ -29,9 +52,9 @@ for student_func_name, student_func in ASSIGNMENT.__dict__.items():
         correct_num = correct_num + 1
     total = total + 1
     print(f"exercise {student_func_name.upper()}:\n{a}\n")
-
-print(f"You got {correct_num} exercise(s) correct out of {total} total exercises.")
-print(f"Your score is: {correct_num * 100 / total:.0f}%")
-print(MODEL.threshold(correct_num / total))
+if total != 0:
+    print(f"You got {correct_num} exercise(s) correct out of {total} total exercises.")
+    print(f"Your score is: {correct_num * 100 / total:.0f}%")
+    print(MODEL.threshold(correct_num / total))
 
 os.remove('MODEL.py')
