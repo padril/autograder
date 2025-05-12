@@ -19,7 +19,7 @@ shutil.copy(modelname, 'MODEL.py')
 shutil.copy(conv_filename, 'ASSIGNMENT.py')
 
 with open("ASSIGNMENT.py") as file:
-    code_blocks = list(filter(None, re.split(r'#.+\n', file.read())))
+    code_blocks = list(filter(None, re.split(r'# In\[[ \d]+\]:\n', file.read())))
 
 pyta_messages = []
 
@@ -30,8 +30,9 @@ for block in code_blocks:
         f.write(block)
     
     # print(block)
+    python_ta.check_errors(temp.name, config={"output-format": "pyta-plain", "disable": "E9992, E9999, W0104"})
     with contextlib.redirect_stdout(io.StringIO()) as g:
-        python_ta.check_errors(temp.name, config={"output-format": "pyta-plain", "disable": "E9992, W0104"})
+        python_ta.check_errors(temp.name, config={"output-format": "pyta-plain", "disable": "E9992, E9999, W0104"})
         pyta_messages.append(g.getvalue().split('\n'))
     # try:
     #     with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
@@ -42,6 +43,8 @@ for block in code_blocks:
     #     # print(e)
     #     # print("________________________________________________")
     #     continue
+
+exit()
 
 for idmessage, message in enumerate(pyta_messages):
     if message == ['']:
@@ -63,7 +66,7 @@ for x, y in zip(pyta_messages, code_blocks):
         print(x)
         print(y)
         print("________________________________________________")
-    else:
+    else: # if tokenize fails at parsing
         try:
             with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
                 exec(y)
