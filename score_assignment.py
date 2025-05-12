@@ -3,7 +3,13 @@ import shutil
 import os
 import subprocess
 import re
+import io
 import contextlib
+import python_ta
+import tempfile
+import logging
+
+logging.basicConfig(level='CRITICAL')
 
 filename = sys.argv[1]
 subprocess.run(['jupyter','nbconvert','--TagRemovePreprocessor.enabled=True','--TagRemovePreprocessor.remove_cell_tags','remove','--log-level','ERROR','--to','python',filename]) 
@@ -15,18 +21,56 @@ shutil.copy(conv_filename, 'ASSIGNMENT.py')
 with open("ASSIGNMENT.py") as file:
     code_blocks = list(filter(None, re.split(r'#.+\n', file.read())))
 
-clean_blocks = []
+pyta_messages = []
 
 for block in code_blocks:
-    try:
-        with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
-            exec(block)
-        clean_blocks.append(block)
-    except (SyntaxError, TypeError, NameError) as e:
-        # print(block.strip())
-        # print(e)
-        # print("________________________________________________")
-        continue
+    temp = tempfile.NamedTemporaryFile()
+
+    with open(temp.name, 'w') as f:
+        f.write(block)
+    
+    # print(block)
+    with contextlib.redirect_stdout(io.StringIO()) as g:
+        python_ta.check_errors(temp.name, config={"output-format": "pyta-plain", "disable": "E9992, W0104"})
+        pyta_messages.append(g.getvalue().split('\n'))
+    # try:
+    #     with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
+    #         exec(block)
+    #     clean_blocks.append(block)
+    # except (SyntaxError, TypeError, NameError) as e:
+    #     # print(block.strip())
+    #     # print(e)
+    #     # print("________________________________________________")
+    #     continue
+
+for idmessage, message in enumerate(pyta_messages):
+    if message == ['']:
+        pyta_messages[idmessage] = ["err"]
+    elif message[3] == "No problems detected, good job!":
+        pyta_messages[idmessage] = []
+    else:
+        pyta_messages[idmessage] = message[4]
+
+clean_blocks = []
+
+if any(pyta_messages):
+    print("Your code has an error in the following location(s):")
+
+for x, y in zip(pyta_messages, code_blocks):
+    if not x:
+        clean_blocks.append(y)
+    elif x != ["err"]:
+        print(x)
+        print(y)
+        print("________________________________________________")
+    else:
+        try:
+            with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
+                exec(y)
+        except SyntaxError as e:
+            print(e)
+            print(y)
+        print("________________________________________________")
 
 with open("ASSIGNMENT.py", 'w') as file:
     for block in clean_blocks:
