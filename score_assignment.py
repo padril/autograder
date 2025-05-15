@@ -19,50 +19,43 @@ shutil.copy(modelname, 'MODEL.py')
 shutil.copy(conv_filename, 'ASSIGNMENT.py')
 
 with open("ASSIGNMENT.py") as file:
-    code_blocks = list(filter(None, re.split(r'# In\[[ \d]+\]:\n', file.read())))
+    code_blocks = list(filter(None, re.split(r'# In\[[ \d]+\]:\n', file.read())))[1:]
 
+working_blocks = []
+failed_blocks = []
 pyta_messages = []
 
 for block in code_blocks:
+    merged = ''.join(working_blocks) + block
     temp = tempfile.NamedTemporaryFile()
 
     with open(temp.name, 'w') as f:
-        f.write(block)
-    
-    # print(block)
-    python_ta.check_errors(temp.name, config={"output-format": "pyta-plain", "disable": "E9992, E9999, W0104"})
+        f.write(merged)
+
     with contextlib.redirect_stdout(io.StringIO()) as g:
         python_ta.check_errors(temp.name, config={"output-format": "pyta-plain", "disable": "E9992, E9999, W0104"})
-        pyta_messages.append(g.getvalue().split('\n'))
-    # try:
-    #     with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
-    #         exec(block)
-    #     clean_blocks.append(block)
-    # except (SyntaxError, TypeError, NameError) as e:
-    #     # print(block.strip())
-    #     # print(e)
-    #     # print("________________________________________________")
-    #     continue
+        message = g.getvalue().split('\n')
+        if message == ['']:
+            failed_blocks.append(block)
+            pyta_messages.append("err")
+        elif message[3] == "No problems detected, good job!":
+            working_blocks.append(block)
+        else:
+            failed_blocks.append(block)
+            pyta_messages.append(message[4])
 
-exit()
-
-for idmessage, message in enumerate(pyta_messages):
-    if message == ['']:
-        pyta_messages[idmessage] = ["err"]
-    elif message[3] == "No problems detected, good job!":
-        pyta_messages[idmessage] = []
-    else:
-        pyta_messages[idmessage] = message[4]
-
-clean_blocks = []
+with open("ASSIGNMENT.py", 'w') as file:
+    file.write(''.join(working_blocks))
 
 if any(pyta_messages):
     print("Your code has an error in the following location(s):")
 
-for x, y in zip(pyta_messages, code_blocks):
-    if not x:
-        clean_blocks.append(y)
-    elif x != ["err"]:
+cleaned_pyta_messages = [re.sub(r'Parsing failed:', '', 
+                         re.sub(r'[\[\(][^(]*?[Ll]ine.*?[\d]+.*?[\)\]]', '', message)).strip()
+                         for message in pyta_messages]
+
+for x, y in zip(cleaned_pyta_messages, failed_blocks):
+    if x != "err":
         print(x)
         print(y)
         print("________________________________________________")
@@ -71,15 +64,10 @@ for x, y in zip(pyta_messages, code_blocks):
             with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
                 exec(y)
         except SyntaxError as e:
-            print(e)
+            print(re.sub(r'[\[\(][^(]*?[Ll]ine.*?[\d]+.*?[\)\]]', '', str(e)).strip())
             print(y)
         print("________________________________________________")
 
-with open("ASSIGNMENT.py", 'w') as file:
-    for block in clean_blocks:
-        file.write(block)
-
-print('_________________________________________________________________________________')
 print('Results:\n')
 
 with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
