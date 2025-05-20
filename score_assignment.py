@@ -54,19 +54,19 @@ cleaned_pyta_messages = [re.sub(r'Parsing failed:', '',
                          re.sub(r'[\[\(][^(]*?[Ll]ine.*?[\d]+.*?[\)\]]', '', message)).strip()
                          for message in pyta_messages]
 
-for x, y in zip(cleaned_pyta_messages, failed_blocks):
-    if x != "err":
-        print(x)
-        print(y)
-        print("________________________________________________")
-    else: # if tokenize fails at parsing
-        try:
-            with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
-                exec(y)
-        except SyntaxError as e:
-            print(re.sub(r'[\[\(][^(]*?[Ll]ine.*?[\d]+.*?[\)\]]', '', str(e)).strip())
-            print(y)
-        print("________________________________________________")
+# for x, y in zip(cleaned_pyta_messages, failed_blocks):
+#     if x != "err":
+#         print(x)
+#         print(y)
+#         print("________________________________________________")
+#     else: # if tokenize fails at parsing
+#         try:
+#             with contextlib.redirect_stdout(open('/dev/null', 'w')) as g:
+#                 exec(y)
+#         except SyntaxError as e:
+#             print(re.sub(r'[\[\(][^(]*?[Ll]ine.*?[\d]+.*?[\)\]]', '', str(e)).strip())
+#             print(y)
+#         print("________________________________________________")
 
 print('Results:\n')
 
