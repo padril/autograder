@@ -12,8 +12,8 @@ To score a student notebook, create a model notebook (see below for format + nam
 
 You can also run:
 
-```pip install .```
-```score [student-notebook.ipynb]```
+```pip install .
+score [student-notebook.ipynb]```
 
 or:
 
