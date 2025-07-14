@@ -8,13 +8,14 @@ import contextlib
 import python_ta
 import tempfile
 import logging
+from pathlib import Path
 
 logging.basicConfig(level='CRITICAL')
 
 filename = sys.argv[1]
 subprocess.run(['jupyter','nbconvert','--TagRemovePreprocessor.enabled=True','--TagRemovePreprocessor.remove_cell_tags','remove','--log-level','ERROR','--to','python',filename]) 
 conv_filename = filename[:-6] + '.py'
-modelname = 'model_' + conv_filename
+modelname = str(Path(conv_filename).with_name('model_' + Path(conv_filename).name))
 shutil.copy(modelname, 'MODEL.py')
 shutil.copy(conv_filename, 'ASSIGNMENT.py')
 
