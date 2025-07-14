@@ -1,4 +1,3 @@
-import sys
 import shutil
 import os
 import subprocess
@@ -9,8 +8,17 @@ import python_ta
 import tempfile
 import logging
 from pathlib import Path
+import argparse
 
 logging.basicConfig(level='CRITICAL')
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filename')
+    args = parser.parse_args()
+    filename = args.filename
+
+    score(filename)
 
 def score(filename):
     subprocess.run(['jupyter','nbconvert','--TagRemovePreprocessor.enabled=True','--TagRemovePreprocessor.remove_cell_tags','remove','--log-level','ERROR','--to','python',filename]) 
@@ -97,5 +105,4 @@ def score(filename):
 
 
 if __name__ == '__main__':
-    filename = sys.argv[1]
-    score(filename)
+    main()
