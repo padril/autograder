@@ -1,4 +1,4 @@
-from model_problem import ModelProblem
+from autograder.model_problem import ModelProblem
 
 def threshold(score: float):
     cutoff = 1
