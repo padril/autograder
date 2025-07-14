@@ -1,7 +1,7 @@
 from itertools import cycle
 
 class ModelProblem:
-    def __init__(self, model_func_prep, solution_func, student_func, extra_sfunc_args = [], extra_model_args = []):
+    def __init__(self, model_func_prep, solution_func, student_func, extra_sfunc_args = [], extra_model_args = [], is_var = False):
         self.model_func_prep = model_func_prep
         self.solution_func = solution_func
         self.student_func = student_func
@@ -12,6 +12,10 @@ class ModelProblem:
         # extra args are used for problems where the student returns a value instead of a function
         self.extra_sfunc_args = extra_sfunc_args
         self.extra_model_args = extra_model_args
+
+        if is_var:
+            self.solution_func = lambda: self.solution_func
+            self.student_func = lambda: self.student_func
 
         self.get_vals()
 
