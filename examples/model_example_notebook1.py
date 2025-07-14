@@ -85,7 +85,7 @@ def model_cleaner_tokenized_check_prep():
     punct = '.?!,[]()"\';:'
     args_list = []
 
-    fh = open("/home/michael/faetar/autograder/examples/lowry.txt")
+    fh = open("lowry.txt")
     for l in fh.readlines():
         sentences = sentence_segment(l, eos, abbreviations)
         for sentence in sentences:
@@ -93,8 +93,8 @@ def model_cleaner_tokenized_check_prep():
     return args_list
 
 def model_longest_match_tokenize_prep():
-    txt = open("/home/michael/faetar/autograder/examples/lowry_zh.txt").read()
-    all_words = open("examples/words_zh.txt").read().split('\n')
+    txt = open("lowry_zh.txt").read()
+    all_words = open("words_zh.txt").read().split('\n')
     sentences = [x + '。' for x in txt.split('。') if x]
     args_list = []
     visible = True

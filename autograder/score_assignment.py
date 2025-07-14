@@ -9,6 +9,7 @@ import tempfile
 import logging
 from pathlib import Path
 import argparse
+import sys
 
 logging.basicConfig(level='CRITICAL')
 
@@ -21,6 +22,10 @@ def main():
     score(filename)
 
 def score(filename):
+    os.chdir(os.path.dirname(filename))
+    sys.path.append(".")
+    filename = os.path.basename(filename)
+
     subprocess.run(['jupyter','nbconvert','--TagRemovePreprocessor.enabled=True','--TagRemovePreprocessor.remove_cell_tags','remove','--log-level','ERROR','--to','python',filename]) 
     conv_filename = filename[:-6] + '.py'
     modelname = str(Path(conv_filename).with_name('model_' + Path(conv_filename).name))
