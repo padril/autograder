@@ -109,6 +109,18 @@ def model_longest_match_tokenize_prep():
 def model_sentence_segment(student_func):
     model = ModelProblem(model_sentence_segment_prep, sentence_segment, student_func)
 
+    hints = ""
+
+    if model.sfunc_vals[0][0] == "TEST":
+        hints += "HINT1\n"
+    if model.hidden_sfunc_vals[0][0] == "TEST":
+        hints += "HINT2\n"
+    if len(model.hidden_sfunc_vals[0]) != 2:
+        hints += "HINT3\n"
+
+    if hints:
+        return hints.strip()
+
     return model.run_basic_tests(err_num=False,
                                  len_err_message="incorrect. Your function split test string 1 into {sfunc_len} sentence(s) instead of {model_len} sentences.\n",
                                  hidden_len_err_message="incorrect. Your function split test string 2 into the wrong number of sentences.\n",

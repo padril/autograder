@@ -7,6 +7,6 @@ setup(
     url='https://github.com/michaelong7/autograder',
     packages=['autograder'],
     install_requires=['nbconvert',
-                      'python-ta @ git+https://github.com/pyta-uoft/pyta.git',                     
+                      'python-ta @ git+https://github.com/pyta-uoft/pyta.git',
                       ],
 )
