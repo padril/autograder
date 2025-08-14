@@ -9,9 +9,16 @@ import tempfile
 import logging
 from pathlib import Path
 import argparse
+import time
 import sys
 
-logging.basicConfig(level='CRITICAL')
+
+log_time = time.strftime('%Y-%m-%d %H:%M:%S')
+
+logging.basicConfig(
+    format='%(message)s',
+    filename=".log",
+    level=logging.INFO)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -101,6 +108,7 @@ def score(filename):
             correct_num = correct_num + 1
         total = total + 1
         print(f"exercise {student_func_name.upper()}:\n{a}\n")
+        logging.info(f"{log_time}\t{student_func_name.upper()}\t{"correct" if a == "correct." else "incorrect"}")
     if total != 0:
         print(f"You got {correct_num} exercise(s) correct out of {total} total exercises.")
         print(f"Your score is: {correct_num * 100 / total:.0f}%")
