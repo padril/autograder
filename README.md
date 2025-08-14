@@ -25,6 +25,9 @@ from autograder.score_assignment import score
 score("student-notebook.ipynb")
 ```
 
+Scoring the assignment writes to a log file (default is .log) with the format:
+\[timestamp\]   \[filename\]    \[exercise name\]    \[correct / incorrect\]
+
 ## Student Notebooks
 
 All cells in student notebooks that are not necessary for problems should be marked with the tag "remove".

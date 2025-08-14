@@ -118,7 +118,7 @@ def score(filename):
             correct_num = correct_num + 1
         total = total + 1
         print(f"exercise {student_func_name.upper()}:\n{a}\n")
-        logging.info(f"{log_time}\t{student_func_name.upper()}\t{"correct" if a == "correct." else "incorrect"}")
+        logging.info(f"{log_time}\t{nbfile.with_suffix('').name}\t{student_func_name.upper()}\t{"correct" if a == "correct." else "incorrect"}")
     if total != 0:
         print(f"You got {correct_num} exercise(s) correct out of {total} total exercises.")
         print(f"Your score is: {correct_num * 100 / total:.0f}%")
