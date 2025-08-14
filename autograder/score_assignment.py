@@ -22,15 +22,25 @@ def main():
     score(filename)
 
 def score(filename):
-    os.chdir(os.path.dirname(filename))
+    nbfile = Path(filename).resolve()
+    os.chdir(nbfile.parent)
     sys.path.append(".")
-    filename = os.path.basename(filename)
 
-    subprocess.run(['jupyter','nbconvert','--TagRemovePreprocessor.enabled=True','--TagRemovePreprocessor.remove_cell_tags','remove','--log-level','ERROR','--to','python',filename]) 
-    conv_filename = filename[:-6] + '.py'
-    modelname = str(Path(conv_filename).with_name('model_' + Path(conv_filename).name))
-    shutil.copy(modelname, 'MODEL.py')
-    shutil.copy(conv_filename, 'ASSIGNMENT.py')
+    pyfile = nbfile.parent / '.autograder' / nbfile.with_suffix('.py').name
+
+    subprocess.run(['jupyter',
+                    'nbconvert',
+                    '--TagRemovePreprocessor.enabled=True',
+                    '--TagRemovePreprocessor.remove_cell_tags',
+                    'remove',
+                    '--log-level', 'ERROR',
+                    '--to', 'python',
+                    '--output-dir', pyfile.parent,
+                    nbfile]) 
+
+    modelfile = pyfile.with_name('model_' + pyfile.name)
+    shutil.copy(pyfile, 'ASSIGNMENT.py')
+    shutil.copy(modelfile, 'MODEL.py')
 
     with open("ASSIGNMENT.py") as file:
         code_blocks = list(filter(None, re.split(r'# In\[[ \d]+\]:\n', file.read())))[1:]
