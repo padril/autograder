@@ -125,6 +125,7 @@ def score(filename):
         print(MODEL.threshold(correct_num / total))
 
     os.remove('MODEL.py')
+    os.remove('ASSIGNMENT.py')
 
 
 if __name__ == '__main__':
