@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='autograder',
-    version='0.1.0',    
+    version='0.1.1',    
     description='For use in automatically grading and providing feedback for problems in Jupyter notebooks.',
     url='https://github.com/michaelong7/autograder',
     packages=['autograder'],
